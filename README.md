@@ -1,1 +1,1 @@
-# networking-using-connected-devices
+# EnviroLink — Home Environment & Weather Integration Monitor
