@@ -84,7 +84,7 @@ The following are self-acquired technologies beyond module content that I am con
 
 ## Project Repository
 
-(https://github.com/rachel-gillespie/connected-devices-app)
+[Github Repo](https://github.com/rachel-gillespie/connected-devices-app)
 
 The repository will include:
 - `sensor/` — RPi data collection script (SenseHAT or simulator)
