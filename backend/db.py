@@ -4,10 +4,6 @@ import os
 
 load_dotenv()
 
-client = MongoClient(os.getenv("MONGO_URI"))
-
-try:
-    client.admin.command('ping')
-    print("✅ Connected to MongoDB Atlas successfully!")
-except Exception as e:
-    print(f"❌ Connection failed: {e}")
+def connect_db():
+    client = MongoClient(os.getenv("MONGO_URI"))
+    return client["envirolink"]
