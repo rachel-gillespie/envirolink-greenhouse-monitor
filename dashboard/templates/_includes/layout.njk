@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EnviroLink</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css" />
+</head>
+
+<body>
+  {% include "_includes/header.njk" %}
+
+  {% include "_includes/nav.njk" %}
+
+  <main class="section">
+    {{ content | safe }}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "_includes/footer.njk" %}
+</body>
+
+</html>
