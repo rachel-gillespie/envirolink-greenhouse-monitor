@@ -31,7 +31,7 @@ client.username_pw_set(os.getenv("MQTT_USERNAME"), os.getenv("MQTT_PASSWORD"))
 client.tls_set()
 client.on_connect = on_connect
 
-client.connect(os.getenv("MQTT_BROKER"), int(os.getenv("MQTT_PORT")))
+client.connect(os.environ["MQTT_BROKER"], int(os.environ["MQTT_PORT"]))
 client.loop_start()
 
 print("📡 Sensor running — publishing every 30 seconds. Ctrl+C to stop.")
