@@ -3,21 +3,32 @@ from dotenv import load_dotenv
 from db import connect_db
 import os
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import time
 from weather import get_current_weather
 
 load_dotenv()
 
 db = connect_db()
-readings_collection = db["readings"]
-weather_collection = db["weather"]
+readings_collection = db.readings
+weather_collection = db.weather
 
-def threshold_checker(payload):
-    if payload["temperature"] > 27:
-        print(f"⚠️ Temperature too high: {payload['temperature']}°C")
-    if payload["humidity"] > 70:
-        print(f"⚠️ Humidity too high: {payload['humidity']}%")
+def get_historical_data(hours=24):
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
+    cursor = db.readings.find({
+        "timestamp": {"$gte": cutoff}
+    }).sort("timestamp", 1)
+    return list(cursor)
+
+def check_thresholds(readings):
+    alerts = []
+    if readings["humidity"] > 70:
+        alerts.append({"type": "danger", "msg": "High Humidity Detected!"})
+        print(f"⚠️ Humidity too high: {readings['humidity']}%")
+    if readings["temperature"] > 28:
+        alerts.append({"type": "danger", "msg": "Room is getting too warm."})
+        print(f"⚠️ Temperature too high: {readings['temperature']}°C")
+    return alerts
 
 def on_connect(client, userdata, flags, reason_code, properties):
     if reason_code == 0:
@@ -29,7 +40,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 def on_message(client, userdata, message):
     payload = json.loads(message.payload.decode())
-    threshold_checker(payload)
+    alerts = check_thresholds(payload)
     payload["timestamp"] = datetime.now(timezone.utc)
     readings_collection.insert_one(payload)
     print(f"💾 Saved: {payload}")

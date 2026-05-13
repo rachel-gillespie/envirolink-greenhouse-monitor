@@ -5,5 +5,5 @@ import os
 load_dotenv()
 
 def connect_db():
-    client = MongoClient(os.getenv("MONGO_URI"))
-    return client["envirolink"]
+    client = MongoClient(os.environ["MONGO_URI"])
+    return client.envirolink

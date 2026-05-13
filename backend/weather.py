@@ -4,9 +4,9 @@ import os
 
 load_dotenv()
 
-API_KEY = os.getenv("OPENWEATHER_API_KEY")
-CITY = os.getenv("OPENWEATHER_CITY")
-UNITS = os.getenv("OPENWEATHER_UNITS")
+API_KEY = os.environ["OPENWEATHER_API_KEY"]
+CITY = os.environ["OPENWEATHER_CITY"]
+UNITS = os.environ["OPENWEATHER_UNITS"]
 
 def get_current_weather():
     url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units={UNITS}"
