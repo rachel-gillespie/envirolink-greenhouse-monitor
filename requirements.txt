@@ -4,3 +4,4 @@ paho-mqtt
 requests
 flask
 flask-socketio
+sense-hat

@@ -3,22 +3,14 @@ from dotenv import load_dotenv
 from db import connect_db
 import os
 import json
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import time
 from weather import get_current_weather
 
 load_dotenv()
-
 db = connect_db()
 readings_collection = db.readings
 weather_collection = db.weather
-
-def get_historical_data(hours=24):
-    cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
-    cursor = db.readings.find({
-        "timestamp": {"$gte": cutoff}
-    }).sort("timestamp", 1)
-    return list(cursor)
 
 def check_thresholds(readings):
     alerts = []
