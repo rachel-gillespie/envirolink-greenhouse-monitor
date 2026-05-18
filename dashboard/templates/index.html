@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  
+
 <div class="columns">
   <div class="column">
     <h1 class="title">Indoor</h1>
@@ -17,6 +17,11 @@
     <p>Description: {{ weather_data.description }}</p>
   </div>
 </div>
+{% for alert in alerts_data %}
+<div class="notification is-danger">
+  {{ alert.msg }}
+</div>
+{% endfor %}
 
 <canvas id="temperatureChart"></canvas>
 

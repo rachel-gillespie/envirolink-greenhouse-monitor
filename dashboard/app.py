@@ -12,10 +12,12 @@ db = connect_db()
 def dashboard():
     sensor_data = db.readings.find_one({}, sort=[("timestamp", -1)])
     weather_data = db.weather.find_one({}, sort=[("timestamp", -1)])
+    alerts_data = db.alerts.find({}, sort=[("timestamp", -1)]).limit(5)
     return render_template('index.html', 
                            title="Dashboard", 
                            sensor_data=sensor_data, 
-                           weather_data=weather_data)
+                           weather_data=weather_data,
+                           alerts_data=alerts_data)
 
 @app.route('/api/readings')
 def return_readings():

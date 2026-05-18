@@ -12,6 +12,7 @@ db = connect_db()
 readings_collection = db.readings
 weather_collection = db.weather
 forecast_collection = db.forecast
+alerts_collection = db.alerts
 
 def check_thresholds(readings):
     alerts = []
@@ -22,23 +23,6 @@ def check_thresholds(readings):
         alerts.append({"type": "danger", "msg": "Room is getting too warm."})
         print(f"⚠️ Temperature too high: {readings['temperature']}°C")
     return alerts
-
-def on_connect(client, userdata, flags, reason_code, properties):
-    if reason_code == 0:
-        print("✅ Connected to HiveMQ")
-        client.subscribe("envirolink/sensors")
-        print("📡 Subscribed to envirolink/sensors")
-    else:
-        print(f"❌ Connection failed: {reason_code}")
-
-def on_message(client, userdata, message):
-    payload = json.loads(message.payload.decode())
-    alerts = check_thresholds(payload)
-    payload["timestamp"] = datetime.now(timezone.utc)
-    readings_collection.insert_one(payload)
-    latest_weather = weather_collection.find_one({}, sort=[("timestamp", -1)])
-    latest_forecast = forecast_collection.find_one({}, sort=[("timestamp", -1)])
-    print(f"💾 Saved: {payload}")
 
 def rules_engine(payload, latest_weather, latest_forecast):
     alerts = []
@@ -63,6 +47,28 @@ def rules_engine(payload, latest_weather, latest_forecast):
         alerts.append({"type": "system optimisation", "msg": "Outdoor/Indoor temperature balance is optimal for natural ventilation - Open vents!, Heavy rain detected outdoors - Conserve water by pausing watering!"})
         print(f"🔄 SYSTEM OPTIMIZATION: Outdoor/Indoor temperature balance is optimal for natural ventilation. Heavy rain detected outdoors.")
     return alerts
+
+def on_connect(client, userdata, flags, reason_code, properties):
+    if reason_code == 0:
+        print("✅ Connected to HiveMQ")
+        client.subscribe("envirolink/sensors")
+        print("📡 Subscribed to envirolink/sensors")
+    else:
+        print(f"❌ Connection failed: {reason_code}")
+
+def on_message(client, userdata, message):
+    payload = json.loads(message.payload.decode())
+    payload["timestamp"] = datetime.now(timezone.utc)
+    alerts = check_thresholds(payload)
+    readings_collection.insert_one(payload)
+    latest_weather = weather_collection.find_one({}, sort=[("timestamp", -1)])
+    latest_forecast = forecast_collection.find_one({}, sort=[("timestamp", -1)])
+    if latest_weather and latest_forecast:
+        rules = rules_engine(payload, latest_weather, latest_forecast)
+        for alert in rules:
+            alert["timestamp"] = datetime.now(timezone.utc)
+            alerts_collection.insert_one(alert)
+    print(f"💾 Saved: {payload}")
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.username_pw_set(os.environ["MQTT_USERNAME"], os.environ["MQTT_PASSWORD"])
