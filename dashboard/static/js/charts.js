@@ -39,3 +39,9 @@ fetch('/api/readings')
             }
         })
     });
+
+document.querySelectorAll('.notification .delete').forEach(button => {
+        button.addEventListener('click', () => {
+            button.parentElement.remove();
+        });
+});

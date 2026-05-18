@@ -4,21 +4,34 @@
 
 <div class="columns">
   <div class="column">
-    <h1 class="title">Indoor</h1>
-    <p>Temperature: {{ sensor_data.temperature }}</p>
-    <p>Humidity: {{ sensor_data.humidity }}</p>
-    <p>Pressure: {{ sensor_data.pressure }}</p>
+    <div class="card">
+      <div class="card-header">
+        <p class="card-header-title">Indoor</p>
+      </div>
+      <div class="card-content">
+        <p>Temperature: {{ sensor_data.temperature }}</p>
+        <p>Humidity: {{ sensor_data.humidity }}</p>
+        <p>Pressure: {{ sensor_data.pressure }}</p>
+      </div>
+    </div>
   </div>
   <div class="column">
-    <h1 class="title">Outdoor</h1>
-    <p>Temperature: {{ weather_data.temperature }}</p>
-    <p>Humidity: {{ weather_data.humidity }}</p>
-    <p>Pressure: {{ weather_data.pressure }}</p>
-    <p>Description: {{ weather_data.description }}</p>
+    <div class="card">
+      <div class="card-header">
+        <p class="card-header-title">Outdoor</p>
+      </div>
+      <div class="card-content">
+        <p>Temperature: {{ weather_data.temperature }}</p>
+        <p>Humidity: {{ weather_data.humidity }}</p>
+        <p>Pressure: {{ weather_data.pressure }}</p>
+        <p>Description: {{ weather_data.description }}</p>
+      </div>
+    </div>
   </div>
 </div>
 {% for alert in alerts_data %}
 <div class="notification {% if alert.type == 'danger' %}is-danger{% else %}is-warning{% endif %}">
+  <button class="delete"></button>
   {{ alert.msg }}
 </div>
 {% endfor %}
