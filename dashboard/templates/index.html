@@ -18,7 +18,7 @@
   </div>
 </div>
 {% for alert in alerts_data %}
-<div class="notification is-danger">
+<div class="notification {% if alert.type == 'danger' %}is-danger{% else %}is-warning{% endif %}">
   {{ alert.msg }}
 </div>
 {% endfor %}
