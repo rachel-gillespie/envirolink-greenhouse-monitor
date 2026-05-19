@@ -45,3 +45,12 @@ document.querySelectorAll('.notification .delete').forEach(button => {
             button.parentElement.remove();
         });
 });
+
+const socket = io();
+
+socket.on('new_reading', function(data) {
+    document.querySelector('.indoor-temperature').textContent = data.temperature + '°C';
+    document.querySelector('.indoor-humidity').textContent = data.humidity + '%';
+    document.querySelector('.indoor-pressure').textContent = data.pressure + 'hPa';
+    document.querySelector('.indoor-timestamp').textContent = data.timestamp;
+});

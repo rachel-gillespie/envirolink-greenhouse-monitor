@@ -20,25 +20,25 @@
       <div class="card">
         <div class="card-content has-text-centered" style="min-height: 100px;">
           <p class="heading">Temperature</p>
-          <p class="title">{{ sensor_data.temperature }}°C</p>
+          <p class="title indoor-temperature">{{ sensor_data.temperature }}°C</p>
         </div>
       </div>
       <div class="card">
         <div class="card-content has-text-centered" style="min-height: 100px;">
           <p class="heading">Humidity</p>
-          <p class="title">{{ sensor_data.humidity }}%</p>
+          <p class="title indoor-humidity">{{ sensor_data.humidity }}%</p>
         </div>
       </div>
       <div class="card">
         <div class="card-content has-text-centered" style="min-height: 100px;">
           <p class="heading">Pressure</p>
-          <p class="title">{{ sensor_data.pressure }}hPa</p>
+          <p class="title indoor-pressure">{{ sensor_data.pressure }}hPa</p>
         </div>
       </div>
       <div class="card">
         <div class="card-content has-text-centered" style="min-height: 100px;">
           <p class="heading">Last Updated</p>
-          <p class="title">{{ sensor_data.timestamp.strftime('%H:%M:%S') }}</p>
+          <p class="title indoor-timestamp">{{ sensor_data.timestamp.strftime('%H:%M:%S') }}</p>
         </div>
       </div>
     </div>
