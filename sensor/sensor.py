@@ -9,6 +9,10 @@ load_dotenv()
 
 sense = SenseHat()
 
+green = (0, 255, 0)
+red = (255,0,0)
+yellow = (255, 255, 0)
+
 def get_readings():
     raw_temp = sense.get_temperature()
     cpu_temp = float(open("/sys/class/thermal/thermal_zone0/temp").read()) / 1000
@@ -19,6 +23,13 @@ def get_readings():
         "humidity": round(sense.get_humidity(), 2),
         "pressure": round(sense.get_pressure(), 2)
     }
+
+def get_led_colour(readings):
+    if readings["temperature"] < 10 or readings["temperature"] > 20:
+        return red
+    if readings["humidity"] > 80 or readings["humidity"] < 40:
+        return yellow
+    return green
 
 def on_connect(client, userdata, flags, reason_code, properties):
     if reason_code == 0:
@@ -45,6 +56,8 @@ print("📡 Sensor running — publishing every 30 seconds. Ctrl+C to stop.")
 try:
     while True:
         readings = get_readings()
+        colour = get_led_colour(readings)
+        sense.clear(colour)
         payload = json.dumps(readings)
         client.publish("envirolink/sensors", payload)
         print(f"Published: {payload}")
