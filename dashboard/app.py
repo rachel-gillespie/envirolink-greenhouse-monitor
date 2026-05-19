@@ -3,7 +3,9 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from db import connect_db, get_historical_data
+import pytz
 
+ireland = pytz.timezone('Europe/Dublin')
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 db = connect_db()
@@ -11,6 +13,7 @@ db = connect_db()
 @app.route('/')
 def dashboard():
     sensor_data = db.readings.find_one({}, sort=[("timestamp", -1)])
+    sensor_data['timestamp'] = sensor_data['timestamp'].replace(tzinfo=pytz.utc).astimezone(ireland)
     weather_data = db.weather.find_one({}, sort=[("timestamp", -1)])
     alerts_data = db.alerts.find({}, sort=[("timestamp", -1)]).limit(5)
     return render_template('index.html', 

@@ -5,3 +5,4 @@ requests
 flask
 flask-socketio
 sense-hat
+pytz
