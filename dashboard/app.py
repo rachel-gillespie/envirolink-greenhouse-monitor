@@ -90,11 +90,12 @@ def on_message(client, userdata, message):
     payload["timestamp"] = datetime.now(timezone.utc)
     alerts = check_thresholds(payload)
     readings_collection.insert_one(payload)
+    irish_time = payload['timestamp'].replace(tzinfo=timezone.utc).astimezone(ireland)
     socketio.emit('new_reading', {
         'temperature': payload['temperature'],
         'humidity': payload['humidity'],
         'pressure': payload['pressure'],
-        'timestamp': payload['timestamp'].strftime('%H:%M:%S')
+        'timestamp': irish_time.strftime('%H:%M:%S')
     })
     latest_weather = weather_collection.find_one({}, sort=[("timestamp", -1)])
     latest_forecast = forecast_collection.find_one({}, sort=[("timestamp", -1)])
