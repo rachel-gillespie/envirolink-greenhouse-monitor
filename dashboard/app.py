@@ -43,16 +43,6 @@ def fetch_weather_loop():
 weather_thread = threading.Thread(target=fetch_weather_loop, daemon=True)
 weather_thread.start()
 
-def check_thresholds(readings):
-    alerts = []
-    if readings["humidity"] > 70:
-        alerts.append({"type": "danger", "msg": "High Humidity Detected!"})
-        print(f"⚠️ Humidity too high: {readings['humidity']}%")
-    if readings["temperature"] > 28:
-        alerts.append({"type": "danger", "msg": "Room is getting too warm."})
-        print(f"⚠️ Temperature too high: {readings['temperature']}°C")
-    return alerts
-
 def rules_engine(payload, latest_weather, latest_forecast):
     alerts = []
     # Rule 1: Frost Prevention Alert
@@ -88,7 +78,6 @@ def on_connect(client, userdata, flags, reason_code, properties):
 def on_message(client, userdata, message):
     payload = json.loads(message.payload.decode())
     payload["timestamp"] = datetime.now(timezone.utc)
-    alerts = check_thresholds(payload)
     readings_collection.insert_one(payload)
     irish_time = payload['timestamp'].replace(tzinfo=timezone.utc).astimezone(ireland)
     socketio.emit('new_reading', {

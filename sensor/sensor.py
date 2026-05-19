@@ -25,7 +25,7 @@ def get_readings():
     }
 
 def get_led_colour(readings):
-    if readings["temperature"] < 10 or readings["temperature"] > 20:
+    if readings["temperature"] < 10 or readings["temperature"] > 30:
         return red
     if readings["humidity"] > 80 or readings["humidity"] < 40:
         return yellow
