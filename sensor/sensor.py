@@ -26,10 +26,16 @@ def on_connect(client, userdata, flags, reason_code, properties):
     else:
         print(f"❌ Connection failed: {reason_code}")
 
+def on_disconnect(client, userdata, disconnect_flags, reason_code, properties):
+    if reason_code != 0:
+        print("⚠️ Unexpected disconnection. Reconnecting...")
+
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-client.username_pw_set(os.getenv("MQTT_USERNAME"), os.getenv("MQTT_PASSWORD"))
+client.username_pw_set(os.environ["MQTT_USERNAME"], os.environ["MQTT_PASSWORD"])
 client.tls_set()
 client.on_connect = on_connect
+client.reconnect_delay_set(min_delay=1, max_delay=60)
+client.on_disconnect = on_disconnect
 
 client.connect(os.environ["MQTT_BROKER"], int(os.environ["MQTT_PORT"]))
 client.loop_start()
