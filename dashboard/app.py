@@ -61,10 +61,14 @@ def rules_engine(payload, latest_weather, latest_forecast):
     if payload["humidity"] < 40:
         alerts.append({"type": "danger", "msg": "Low Humidity Level - Activate misting system!"})
         print(f"🍂 WARNING: Low Humidity Level! Internal humidity has dropped below 40%. Plants are at risk of drying out.")
-    # Rule 5: Smart Ventilation & Irrigation Efficiency
-    if latest_weather["temperature"] > payload["temperature"] and payload["temperature"] < 18 or any("rain" in slot["description"] for slot in latest_forecast["forecast"]):
-        alerts.append({"type": "system optimisation", "msg": "Outdoor/Indoor temperature balance is optimal for natural ventilation - Open vents!, Heavy rain detected outdoors - Conserve water by pausing watering!"})
-        print(f"🔄 SYSTEM OPTIMIZATION: Outdoor/Indoor temperature balance is optimal for natural ventilation. Heavy rain detected outdoors.")
+    # Rule 5: Smart Ventilation
+    if latest_weather["temperature"] > payload["temperature"] and payload["temperature"] < 18:
+        alerts.append({"type": "system optimisation", "msg": "Outdoor/Indoor temperature balance is optimal for natural ventilation - Open vents!"})
+        print(f"🔄 SYSTEM OPTIMIZATION: Outdoor/Indoor temperature balance is optimal for natural ventilation.")
+     # Rule 6: Irrigation Efficiency
+    if any("rain" in slot["description"] for slot in latest_forecast["forecast"]):
+        alerts.append({"type": "system optimisation", "msg": "Heavy rain detected outdoors - Conserve water by pausing watering!"})
+        print(f"🔄 SYSTEM OPTIMIZATION: Heavy rain detected outdoors.")
     return alerts
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -126,4 +130,4 @@ def return_readings():
     return jsonify(history)
 
 if __name__ == '__main__':
-    socketio.run(app,host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)

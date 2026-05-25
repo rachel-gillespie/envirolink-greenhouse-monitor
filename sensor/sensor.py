@@ -8,6 +8,7 @@ import time
 load_dotenv()
 
 sense = SenseHat()
+time.sleep(10)
 
 green = (0, 255, 0)
 red = (255,0,0)
@@ -16,8 +17,7 @@ yellow = (255, 255, 0)
 def get_readings():
     raw_temp = sense.get_temperature()
     cpu_temp = float(open("/sys/class/thermal/thermal_zone0/temp").read()) / 1000
-    corrected_temp = raw_temp - ((cpu_temp - raw_temp) / 1.5)
-    
+    corrected_temp = raw_temp - ((cpu_temp - raw_temp) / 5.466)
     return {
         "temperature": round(corrected_temp, 2),
         "humidity": round(sense.get_humidity(), 2),
