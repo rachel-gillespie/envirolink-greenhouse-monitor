@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, redirect, request
 from flask_socketio import SocketIO
 import sys
 import os
@@ -25,6 +25,7 @@ readings_collection = db.readings
 weather_collection = db.weather
 forecast_collection = db.forecast
 alerts_collection = db.alerts
+config_collection = db.config
 
 def fetch_weather_loop():
     while True:
@@ -44,25 +45,26 @@ weather_thread = threading.Thread(target=fetch_weather_loop, daemon=True)
 weather_thread.start()
 
 def rules_engine(payload, latest_weather, latest_forecast):
+    config = config_collection.find_one({})
     alerts = []
     # Rule 1: Frost Prevention Alert
-    if latest_weather["temperature"] <= 0 or payload["temperature"] < 10:
+    if latest_weather["temperature"] <= config["temp_min"] or payload["temperature"] < config["temp_min"]:
         alerts.append({"type": "danger", "msg": "🚨 Frost risk detected — activate heating!"})
         print(f"🚨 CRITICAL: Frost Risk Detected! Outdoor temperature is at freezing or indoor temperature has dropped below 10°C.")
     # Rule 2: Heat Stress Mitigation
-    if payload["temperature"] > 30:
+    if payload["temperature"] > config["temp_max"]:
         alerts.append({"type": "danger", "msg": "Heat Stress Risk - Activate cooling fans and open vents to lower the temperature!"})
         print(f"⚠️ WARNING: Heat Stress Risk! Greenhouse temperature has exceeded 30°C.")
     # Rule 3: High Humidity & Disease Prevention
-    if payload["humidity"] > 80:
+    if payload["humidity"] > config["humidity_max"]:
         alerts.append({"type": "danger", "msg": "High Humidity Level - Initiate air circulation/de humidification!"})
         print(f"🌧️ NOTICE: High Humidity Level! Internal humidity is above 80%, increasing mold and disease risk.")
     # Rule 4: Low Humidity & Dehydration Warning
-    if payload["humidity"] < 40:
+    if payload["humidity"] < config["humidity_min"]:
         alerts.append({"type": "danger", "msg": "Low Humidity Level - Activate misting system!"})
         print(f"🍂 WARNING: Low Humidity Level! Internal humidity has dropped below 40%. Plants are at risk of drying out.")
     # Rule 5: Smart Ventilation
-    if latest_weather["temperature"] < payload["temperature"] and payload["temperature"] > 24:
+    if latest_weather["temperature"] < payload["temperature"] and payload["temperature"] > config["ventilation_temp"]:
         alerts.append({"type": "system optimisation", "msg": "Outdoor/Indoor temperature balance is optimal for natural ventilation - Open vents!"})
         print(f"🔄 SYSTEM OPTIMIZATION: Outdoor/Indoor temperature balance is optimal for natural ventilation.")
      # Rule 6: Irrigation Efficiency
@@ -135,6 +137,23 @@ def return_alerts():
     for alert in alerts:
         alert['_id'] = str(alert['_id'])
     return jsonify(alerts)
+
+@app.route('/settings', methods=['GET'])
+def settings():
+    config = config_collection.find_one({})
+    return render_template('settings.html', 
+                           config=config)
+
+@app.route('/settings', methods=['POST'])
+def update_settings():
+    config_collection.update_one({}, {"$set": {
+        "temp_min": float(request.form['temp_min']),
+        "temp_max": float(request.form['temp_max']),
+        "humidity_min": float(request.form['humidity_min']),
+        "humidity_max": float(request.form['humidity_max']),
+        "ventilation_temp": float(request.form['ventilation_temp'])
+    }})
+    return redirect('/settings')
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)

@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1 class="title">Settings</h1>
+
+<form method="POST" action="/settings">
+    <div class="field">
+        <label class="label">Minimum Temperature (°C)</label>
+        <div class="control">
+            <input class="input" type="number" name="temp_min" value="{{ config.temp_min }}" step="0.5">
+        </div>
+    </div>
+    <div class="field">
+        <label class="label">Maximum Temperature (°C)</label>
+        <div class="control">
+            <input class="input" type="number" name="temp_max" value="{{ config.temp_max }}" step="0.5">
+        </div>
+    </div>
+    <div class="field">
+        <label class="label">Minimum Humidity (%)</label>
+        <div class="control">
+            <input class="input" type="number" name="humidity_min" value="{{ config.humidity_min }}" step="0.5">
+        </div>
+    </div>
+    <div class="field">
+        <label class="label">Maximum Humidity (%)</label>
+        <div class="control">
+            <input class="input" type="number" name="humidity_max" value="{{ config.humidity_max }}" step="0.5">
+        </div>
+    </div>
+    <div class="field">
+        <label class="label">Ventilation Temperature (°C)</label>
+        <div class="control">
+            <input class="input" type="number" name="ventilation_temp" value="{{ config.ventilation_temp }}" step="0.5">
+        </div>
+    </div>
+    <div class="control">
+        <button class="button is-primary">Submit</button>
+    </div>
+</form>
+
+{% endblock %}
