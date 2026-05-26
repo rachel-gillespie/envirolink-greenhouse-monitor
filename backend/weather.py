@@ -5,11 +5,12 @@ import os
 load_dotenv()
 
 API_KEY = os.environ["OPENWEATHER_API_KEY"]
-CITY = os.environ["OPENWEATHER_CITY"]
+LAT = os.environ["OPENWEATHER_LAT"]
+LON = os.environ["OPENWEATHER_LON"]
 UNITS = os.environ["OPENWEATHER_UNITS"]
 
 def get_current_weather():
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units={UNITS}"
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={LAT}&lon={LON}&appid={API_KEY}&units={UNITS}"
     response = requests.get(url)
     data = response.json()
 
@@ -24,7 +25,7 @@ def get_current_weather():
     }
 
 def get_forecast():
-    url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={API_KEY}&units={UNITS}&cnt=8"
+    url = f"https://api.openweathermap.org/data/2.5/forecast?lat={LAT}&lon={LON}&appid={API_KEY}&units={UNITS}"
     response = requests.get(url)
     data = response.json()
 
