@@ -4,12 +4,14 @@
 
 <h1 class="title">🌱 EnviroLink 🌱 Greenhouse Monitor</h1>
 
-{% for alert in alerts_data %}
-<div class="notification {% if alert.type == 'danger' %}is-danger{% else %}is-warning{% endif %}">
-  <button class="delete"></button>
-  {{ alert.msg }}
+<div id="alerts-container">
+  {% for alert in alerts_data %}
+  <div class="notification {% if alert.type == 'danger' %}is-danger{% else %}is-warning{% endif %}">
+    <button class="delete"></button>
+    {{ alert.msg }}
+  </div>
+  {% endfor %}
 </div>
-{% endfor %}
 
 <div class="columns">
   <div class="column">

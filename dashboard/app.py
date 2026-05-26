@@ -62,7 +62,7 @@ def rules_engine(payload, latest_weather, latest_forecast):
         alerts.append({"type": "danger", "msg": "Low Humidity Level - Activate misting system!"})
         print(f"🍂 WARNING: Low Humidity Level! Internal humidity has dropped below 40%. Plants are at risk of drying out.")
     # Rule 5: Smart Ventilation
-    if latest_weather["temperature"] > payload["temperature"] and payload["temperature"] < 18:
+    if latest_weather["temperature"] < payload["temperature"] and payload["temperature"] > 24:
         alerts.append({"type": "system optimisation", "msg": "Outdoor/Indoor temperature balance is optimal for natural ventilation - Open vents!"})
         print(f"🔄 SYSTEM OPTIMIZATION: Outdoor/Indoor temperature balance is optimal for natural ventilation.")
      # Rule 6: Irrigation Efficiency
@@ -128,6 +128,13 @@ def return_readings():
     for reading in history:
         reading['_id'] = str(reading['_id'])
     return jsonify(history)
+
+@app.route('/api/alerts')
+def return_alerts():
+    alerts = list(alerts_collection.find({}, sort=[("timestamp", -1)]).limit(5))
+    for alert in alerts:
+        alert['_id'] = str(alert['_id'])
+    return jsonify(alerts)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)

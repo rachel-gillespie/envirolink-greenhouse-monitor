@@ -54,3 +54,25 @@ socket.on('new_reading', function(data) {
     document.querySelector('.indoor-pressure').textContent = data.pressure + 'hPa';
     document.querySelector('.indoor-timestamp').textContent = data.timestamp;
 });
+
+function loadAlerts() {
+    fetch('/api/alerts')
+        .then(response => response.json())
+        .then(alerts => {
+            const container = document.getElementById('alerts-container');
+            container.innerHTML = '';
+            alerts.forEach(alert => {
+                const div = document.createElement('div');
+                div.className = `notification ${alert.type === 'danger' ? 'is-danger' : 'is-warning'}`;
+                div.innerHTML = `<button class="delete"></button>${alert.msg}`;
+                container.appendChild(div);
+            });
+            // Reattach delete button listeners
+            container.querySelectorAll('.delete').forEach(button => {
+                button.addEventListener('click', () => button.parentElement.remove());
+            });
+        });
+}
+
+loadAlerts();
+setInterval(loadAlerts, 30000);
