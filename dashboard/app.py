@@ -30,6 +30,9 @@ config_collection = db.config
 def fetch_weather_loop():
     while True:
         weather = get_current_weather()
+        if weather is None:
+            time.sleep(60)  # retry after 1 minute
+            continue
         forecast = get_forecast()
         weather["timestamp"] = datetime.now(timezone.utc)
         forecast_doc = {
@@ -46,6 +49,9 @@ weather_thread.start()
 
 def rules_engine(payload, latest_weather, latest_forecast):
     config = config_collection.find_one({})
+    if config is None:
+        print("⚠️ No config found in database. Run setup_config.py first.")
+        return []
     alerts = []
     # Rule 1: Frost Prevention Alert
     if latest_weather["temperature"] <= config["temp_min"] or payload["temperature"] < config["temp_min"]:
@@ -82,9 +88,16 @@ def on_connect(client, userdata, flags, reason_code, properties):
         print(f"❌ Connection failed: {reason_code}")
 
 def on_message(client, userdata, message):
-    payload = json.loads(message.payload.decode())
+    try:
+        payload = json.loads(message.payload.decode())
+    except json.JSONDecodeError:
+        print(f"⚠️ Invalid JSON received: {message.payload}")
+        return
     payload["timestamp"] = datetime.now(timezone.utc)
-    readings_collection.insert_one(payload)
+    try:
+        readings_collection.insert_one(payload)
+    except Exception as e:
+        print(f"⚠️ Failed to save reading to MongoDB: {e}")
     irish_time = payload['timestamp'].replace(tzinfo=timezone.utc).astimezone(ireland)
     socketio.emit('new_reading', {
         'temperature': payload['temperature'],
@@ -115,8 +128,23 @@ print("🔄 Backend running — waiting for messages. Ctrl+C to stop.")
 @app.route('/')
 def dashboard():
     sensor_data = db.readings.find_one({}, sort=[("timestamp", -1)])
-    sensor_data['timestamp'] = sensor_data['timestamp'].replace(tzinfo=pytz.utc).astimezone(ireland)
+    if sensor_data:
+        sensor_data['timestamp'] = sensor_data['timestamp'].replace(tzinfo=pytz.utc).astimezone(ireland)
+    else:
+        sensor_data = {
+            "temperature": "N/A",
+            "humidity": "N/A",
+            "pressure": "N/A",
+            "timestamp": "No data yet"
+        }
     weather_data = db.weather.find_one({}, sort=[("timestamp", -1)])
+    if not weather_data:
+        weather_data = {
+            "temperature": "N/A",
+            "humidity": "N/A",
+            "pressure": "N/A",
+            "description": "No data yet"
+        }
     alerts_data = db.alerts.find({}, sort=[("timestamp", -1)]).limit(5)
     return render_template('index.html', 
                            title="Dashboard", 

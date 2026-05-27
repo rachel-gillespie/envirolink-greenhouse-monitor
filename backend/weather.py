@@ -14,6 +14,10 @@ def get_current_weather():
     response = requests.get(url)
     data = response.json()
 
+    if "name" not in data:
+        print(f"⚠️ Weather API error: {data.get('message', 'Unknown error')}")
+        return None
+
     return {
         "city": data["name"],
         "temperature": data["main"]["temp"],
