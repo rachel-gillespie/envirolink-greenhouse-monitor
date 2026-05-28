@@ -1,6 +1,6 @@
 # 🌱 EnviroLink 🌱 Greenhouse Monitor
 
-![alt text](https://vscode-remote%2Bssh-002dremote-002bhdiprpi.vscode-resource.vscode-cdn.net/home/rachelgillespie/envirolink-greenhouse-monitor/docs/graphic.svg?version%3D1779997882853)
+![Project Graphic]((https://github.com/rachel-gillespie/envirolink-greenhouse-monitor/tree/main/docs/graphic.svg))
 
 ## Project overview
 EnviroLink is a connected IoT system that monitors greenhouse conditions in real time using a Raspberry Pi with a SenseHAT, and combines live indoor readings with outdoor weather data from the OpenWeather API. It provides users with a unified view of both their indoor environment and outdoor forecast, enabling smarter decisions like opening vents when outdoor conditions are favourable, or alerting when frost is forecast.
