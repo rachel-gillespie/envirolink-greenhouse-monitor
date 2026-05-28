@@ -11,7 +11,6 @@
 </head>
 
 <body>
-  {% include "_includes/header.html" %}
   {% include "_includes/nav.html" %}
 
   <main class="section">
@@ -20,8 +19,6 @@
     {{ content | safe }}
     {% block content %}{% endblock %}
   </main>
-
-  {% include "_includes/footer.html" %}
 
   {# Scripts loaded at the end of body so the DOM is ready before they execute #}
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>  {# Socket.IO client — matches the Flask-SocketIO version on the server #}

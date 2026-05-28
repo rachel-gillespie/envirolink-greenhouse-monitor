@@ -17,16 +17,11 @@ UNITS = os.environ["OPENWEATHER_UNITS"]  # "metric" for Celsius, "imperial" for 
 def get_current_weather():
     """
     Fetch the current weather conditions for the configured location.
-    Returns a dictionary of weather data, or None if the API call fails.
+    Returns a dictionary of weather data.
     """
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={LAT}&lon={LON}&appid={API_KEY}&units={UNITS}"
     response = requests.get(url)
     data = response.json()
-
-    # "name" (city name) is absent from the response if the API returned an error
-    if "name" not in data:
-        print(f"⚠️ Weather API error: {data.get('message', 'Unknown error')}")
-        return None
 
     # Extract and return only the fields needed by the dashboard
     return {
