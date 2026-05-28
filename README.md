@@ -112,11 +112,12 @@ The dashboard will be available at `http://<your-rpi-ip>:5000`
 
 
 ## Running as a systemd service (optional)
-To run EnviroLink automatically on boot, create the following service files:
 > [!NOTE]
 > Replace rachelgillespie in the User, WorkingDirectory, ExecStart and EnvironmentFile fields with your own username.
 > [!NOTE]
 > The `After=network-online.target` and `Wants=network-online.target` directives ensure the services wait for a full network connection before starting. This improves reliability on boot and prevents MQTT connection failures.
+
+### To run EnviroLink automatically on boot, create the following service files:
 
 /etc/systemd/system/envirolink-sensor.service
 ```ini
