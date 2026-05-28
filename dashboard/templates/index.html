@@ -1,11 +1,15 @@
+{# index.html — main dashboard page, extends layout.html and fills the "content" block #}
 {% extends "layout.html" %}
 
 {% block content %}
 
 <h1 class="title">🌱 EnviroLink 🌱 Greenhouse Monitor</h1>
 
+<!-- Alerts Section -->
+<!-- Alerts are server-rendered on page load, then refreshed every 30s by loadAlerts() in dashboard.js -->
 <div id="alerts-container">
   {% for alert in alerts_data %}
+  {# Bulma's is-danger (red) or is-warning (yellow) depending on alert severity #}
   <div class="notification {% if alert.type == 'danger' %}is-danger{% else %}is-warning{% endif %}">
     <button class="delete"></button>
     {{ alert.msg }}
@@ -13,7 +17,11 @@
   {% endfor %}
 </div>
 
+<!-- Live Readings Section -->
+<!-- Two-column layout: Indoor (live via Socket.IO) on the left, Outdoor (OpenWeatherMap) on the right -->
 <div class="columns">
+
+  <!-- Indoor Column — values are updated in real time by the socket.on('new_reading') handler in dashboard.js -->
   <div class="column">
     <div class="card">
       <div class="card-header">
@@ -22,29 +30,35 @@
       <div class="card">
         <div class="card-content has-text-centered" style="min-height: 100px;">
           <p class="heading">Temperature</p>
+          {# indoor-temperature class is targeted by dashboard.js to update this value live #}
           <p class="title indoor-temperature">{{ sensor_data.temperature }}°C</p>
         </div>
       </div>
       <div class="card">
         <div class="card-content has-text-centered" style="min-height: 100px;">
           <p class="heading">Humidity</p>
+          {# indoor-humidity class is targeted by dashboard.js to update this value live #}
           <p class="title indoor-humidity">{{ sensor_data.humidity }}%</p>
         </div>
       </div>
       <div class="card">
         <div class="card-content has-text-centered" style="min-height: 100px;">
           <p class="heading">Pressure</p>
+          {# indoor-pressure class is targeted by dashboard.js to update this value live #}
           <p class="title indoor-pressure">{{ sensor_data.pressure }}hPa</p>
         </div>
       </div>
       <div class="card">
         <div class="card-content has-text-centered" style="min-height: 100px;">
           <p class="heading">Last Updated</p>
+          {# strftime formats the Python datetime object into a readable HH:MM:SS string #}
           <p class="title indoor-timestamp">{{ sensor_data.timestamp.strftime('%H:%M:%S') }}</p>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Outdoor Column — static per page load, sourced from OpenWeatherMap API in weather.py -->
   <div class="column">
     <div class="card">
       <div class="card-header">
@@ -76,8 +90,11 @@
       </div>
     </div>
   </div>
+
 </div>
 
+<!-- Historical Charts Section -->
+<!-- Canvas elements are populated by Chart.js in dashboard.js using data from /api/readings -->
 <div class="columns">
   <div class="column">
     <h2 class="subtitle">Temperature (last 24 hours)</h2>

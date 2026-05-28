@@ -1,27 +1,32 @@
+{# layout.html — base template, all other pages extend this and fill the "content" block #}
+{# Scripts loaded at the end of body — the browser parses HTML top to bottom, so placing scripts here ensures all DOM elements (e.g. <canvas> tags for Chart.js) exist before the scripts try to access them #}
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EnviroLink</title>
+  {# Bulma CSS framework — loaded from CDN, no build step required #}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css" />
 </head>
 
 <body>
   {% include "_includes/header.html" %}
-
   {% include "_includes/nav.html" %}
 
   <main class="section">
+    {# "content | safe" renders raw HTML passed from Flask (e.g. for non-Jinja routes) #}
+    {# "block content" is filled by child templates that extend this layout #}
     {{ content | safe }}
     {% block content %}{% endblock %}
   </main>
 
   {% include "_includes/footer.html" %}
-  
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+
+  {# Scripts loaded at the end of body so the DOM is ready before they execute #}
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>  {# Socket.IO client — matches the Flask-SocketIO version on the server #}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>          {# Chart.js — used for historical trend graphs in dashboard.js #}
+  <script src="{{ url_for('static', filename='js/charts.js') }}"></script> {# url_for generates the correct path to the static file regardless of where Flask is hosted #}
 </body>
 
 </html>

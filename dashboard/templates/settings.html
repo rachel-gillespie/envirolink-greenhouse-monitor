@@ -1,13 +1,18 @@
+{# settings.html — allows the user to configure the alert thresholds used by the rules engine in alerts.py #}
 {% extends "layout.html" %}
 
 {% block content %}
 
 <h1 class="title">Settings</h1>
 
+{# Form submits via POST to /settings — handled by the settings route in app.py #}
 <form method="POST" action="/settings">
+
+    {# Temperature threshold fields — values pre-filled from the current config loaded by Flask #}
     <div class="field">
         <label class="label">Minimum Temperature (°C)</label>
         <div class="control">
+            {# step="0.5" allows half-degree precision #}
             <input class="input" type="number" name="temp_min" value="{{ config.temp_min }}" step="0.5">
         </div>
     </div>
@@ -17,6 +22,8 @@
             <input class="input" type="number" name="temp_max" value="{{ config.temp_max }}" step="0.5">
         </div>
     </div>
+
+    {# Humidity threshold fields #}
     <div class="field">
         <label class="label">Minimum Humidity (%)</label>
         <div class="control">
@@ -29,15 +36,19 @@
             <input class="input" type="number" name="humidity_max" value="{{ config.humidity_max }}" step="0.5">
         </div>
     </div>
+
+    {# Ventilation rule field — triggers a "open a window" alert when indoor temp exceeds this value #}
     <div class="field">
         <label class="label">Ventilation Temperature (°C)</label>
         <div class="control">
             <input class="input" type="number" name="ventilation_temp" value="{{ config.ventilation_temp }}" step="0.5">
         </div>
     </div>
+
     <div class="control">
         <button class="button is-primary">Submit</button>
     </div>
+
 </form>
 
 {% endblock %}
