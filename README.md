@@ -68,7 +68,7 @@ See docs/architecture.svg for the full system diagram.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/rachel-gillespie/connected-devices-app
+git clone https://github.com/rachel-gillespie/envirolink-greenhouse-monitor
 cd connected-devices-app
 ```
 
@@ -127,9 +127,9 @@ Wants=network-online.target
 
 [Service]
 User=rachelgillespie
-WorkingDirectory=/home/rachelgillespie/connected-devices-app
-ExecStart=/home/rachelgillespie/connected-devices-app/.venv/bin/python sensor/sensor.py
-EnvironmentFile=/home/rachelgillespie/connected-devices-app/.env
+WorkingDirectory=/home/rachelgillespie/envirolink-greenhouse-monitor
+ExecStart=/home/rachelgillespie/envirolink-greenhouse-monitor/.venv/bin/python sensor/sensor.py
+EnvironmentFile=/home/rachelgillespie/envirolink-greenhouse-monitor/.env
 Restart=on-failure
 RestartSec=5
 
@@ -146,9 +146,9 @@ Wants=network-online.target
 
 [Service]
 User=rachelgillespie
-WorkingDirectory=/home/rachelgillespie/connected-devices-app
-ExecStart=/home/rachelgillespie/connected-devices-app/.venv/bin/python dashboard/app.py
-EnvironmentFile=/home/rachelgillespie/connected-devices-app/.env
+WorkingDirectory=/home/rachelgillespie/envirolink-greenhouse-monitor
+ExecStart=/home/rachelgillespie/envirolink-greenhouse-monitor/.venv/bin/python dashboard/app.py
+EnvironmentFile=/home/rachelgillespie/envirolink-greenhouse-monitor/.env
 Restart=on-failure
 RestartSec=5
 
