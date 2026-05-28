@@ -1,6 +1,6 @@
 # 🌱 EnviroLink 🌱 Greenhouse Monitor
 
-![Project Graphic]((https://github.com/rachel-gillespie/envirolink-greenhouse-monitor/tree/main/docs/graphic.svg))
+![Project Graphic](./docs/graphic.svg)
 
 ## Project overview
 EnviroLink is a connected IoT system that monitors greenhouse conditions in real time using a Raspberry Pi with a SenseHAT, and combines live indoor readings with outdoor weather data from the OpenWeather API. It provides users with a unified view of both their indoor environment and outdoor forecast, enabling smarter decisions like opening vents when outdoor conditions are favourable, or alerting when frost is forecast.
@@ -116,7 +116,6 @@ The dashboard will be available at `http://<your-rpi-ip>:5000`
 ## Running as a systemd service (optional)
 > [!NOTE]
 > Replace rachelgillespie in the User, WorkingDirectory, ExecStart and EnvironmentFile fields with your own username.
-> [!NOTE]
 > The `After=network-online.target` and `Wants=network-online.target` directives ensure the services wait for a full network connection before starting. This improves reliability on boot and prevents MQTT connection failures.
 
 ### To run EnviroLink automatically on boot, create the following service files:
