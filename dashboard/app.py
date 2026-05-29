@@ -62,7 +62,6 @@ def fetch_weather_loop():
 weather_thread = threading.Thread(target=fetch_weather_loop, daemon=True)
 weather_thread.start()
 
-
 # --- Rules Engine ---
 def rules_engine(payload, latest_weather, latest_forecast):
     """

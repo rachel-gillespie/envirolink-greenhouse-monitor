@@ -9,8 +9,15 @@ from dotenv import load_dotenv
 import os
 import json
 import time
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
+import sys
+from app import rules_engine
+from db import connect_db
 
 load_dotenv()  # reads key-value pairs from a .env file and sets them as environment variables
+
+db = connect_db()
+config_collection = db.config    # user-defined thresholds from the settings page
 
 sense = SenseHat()
 time.sleep(10)  # allow the SenseHAT time to initialise before taking readings — important for systemd startup
@@ -37,16 +44,14 @@ def get_readings():
     }
 
 def get_led_colour(readings):
-    """
-    Determine the appropriate LED matrix colour based on current readings.
-    Red indicates a critical temperature condition, yellow a humidity warning,
-    and green means all values are within the safe operating range.
-    """
-    if readings["temperature"] < 10 or readings["temperature"] > 30:
+    config = config_collection.find_one({})
+    if config is None:
+        return green  # default to green if config isn't loaded yet
+    if readings["temperature"] < config["temp_min"] or readings["temperature"] > config["temp_max"]:
         return red
-    if readings["humidity"] > 80 or readings["humidity"] < 40:
+    if readings["humidity"] > config["humidity_max"] or readings["humidity"] < config["humidity_min"]:
         return yellow
-    return green  # only reached if both temperature and humidity are within range
+    return green # only reached if both temperature and humidity are in range
 
 
 # --- MQTT Callbacks ---
