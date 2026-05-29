@@ -155,7 +155,9 @@ def on_message(client, userdata, message):
         rules = rules_engine(payload, latest_weather, latest_forecast)
         for alert in rules:
             alert["timestamp"] = datetime.now(timezone.utc)
-            alerts_collection.insert_one(alert)
+            last = alerts_collection.find_one({"type": alert["type"]}, sort=[("timestamp", -1)])
+            if last is None or last["msg"] != alert["msg"]:
+                alerts_collection.insert_one(alert)
 
     print(f"💾 Saved: {payload}")
 
