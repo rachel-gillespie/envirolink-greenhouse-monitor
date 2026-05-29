@@ -111,7 +111,7 @@ python3 dashboard/app.py
 The dashboard will be available at `http://<your-rpi-ip>:5000`
 
 ## Demo video link
-
+[EnviroLink Demo](https://youtu.be/3xjtuV67rv8)
 
 ## Running as a systemd service (optional)
 > [!NOTE]
